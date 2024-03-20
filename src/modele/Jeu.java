@@ -9,6 +9,8 @@ package modele;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.Observable;
+import javax.swing.JOptionPane;
+
 
 
 public class Jeu extends Observable {
@@ -16,17 +18,17 @@ public class Jeu extends Observable {
     public static final int SIZE_X = 20;
     public static final int SIZE_Y = 10;
 
-
+    private int niveauActuel = 1; // Niveau actuel du jeu
 
     private Heros heros;
 
     private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une case à partir de sa référence
     private Case[][] grilleEntites = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une case à partir de ses coordonnées
 
-
+    private Point targetPosition;
 
     public Jeu() {
-        initialisationNiveau();
+        initialisationNiveau1();
     }
 
 
@@ -45,38 +47,82 @@ public class Jeu extends Observable {
         notifyObservers();
     }
 
-    
-    private void initialisationNiveau() {
-
-        // Autres initialisations...
-
-        // Création d'une case cible à la position (10, 5) par exemple
-
-
-
-        // murs extérieurs horizontaux
+    // Méthode pour passer au niveau suivant
+    public void passerAuNiveauSuivant() {
+        switch (niveauActuel) {
+            case 1:
+                initialisationNiveau2();
+                niveauActuel++;
+                break;
+            case 2:
+                afficherMessage("Vous avez atteint le niveau 2 !");
+                break;
+            // Ajoutez des cas pour les autres niveaux ici
+            default:
+                afficherMessage("Vous avez atteint le dernier niveau !");
+        }
+    }
+    private void initialisationNiveau1() {
+        // Murs extérieurs horizontaux
         for (int x = 0; x < 20; x++) {
             addCase(new Mur(this), x, 0);
             addCase(new Mur(this), x, 9);
         }
 
-        // murs extérieurs verticaux
+        // Murs extérieurs verticaux
         for (int y = 1; y < 9; y++) {
             addCase(new Mur(this), 0, y);
             addCase(new Mur(this), 19, y);
         }
 
+        // Cases vides
         for (int x = 1; x < 19; x++) {
             for (int y = 1; y < 9; y++) {
                 addCase(new Vide(this), x, y);
             }
-
         }
 
+        // Position du héros
         heros = new Heros(this, grilleEntites[4][4]);
+
+        // Position du bloc
         Bloc b = new Bloc(this, grilleEntites[6][6]);
-        addCase(new Target(this),10,5);
+
+        // Position de la cible
+        targetPosition = new Point(10, 5);
+        addCase(new Target(this), targetPosition.x, targetPosition.y);
     }
+
+    private void initialisationNiveau2() {
+
+        for (int x = 0; x < 20; x++) {
+            addCase(new Mur(this), x, 0);
+            addCase(new Mur(this), x, 9);
+        }
+
+        // Murs extérieurs verticaux
+        for (int y = 1; y < 9; y++) {
+            addCase(new Mur(this), 0, y);
+            addCase(new Mur(this), 19, y);
+        }
+
+        // Cases vides
+        for (int x = 1; x < 19; x++) {
+            for (int y = 1; y < 9; y++) {
+                addCase(new Vide(this), x, y);
+            }
+        }
+
+
+        // Position du bloc
+        Bloc b = new Bloc(this, grilleEntites[6][6]);
+
+        // Position de la cible
+        targetPosition = new Point(2, 5);
+        addCase(new Target(this), targetPosition.x, targetPosition.y);
+    }
+
+// Implémenter initialiserNiveau3(), initialiserNiveau4() et initialiserNiveau5() de la même manière.
 
 
 
@@ -107,6 +153,10 @@ public class Jeu extends Observable {
             if (caseALaPosition(pCible).peutEtreParcouru()) {
                 e.getCase().quitterLaCase();
                 caseALaPosition(pCible).entrerSurLaCase(e);
+                // Vérifier si la position actuelle correspond à la position de la cible
+                if (pCible.equals(targetPosition)&& e instanceof Bloc) {
+                    passerAuNiveauSuivant();
+                }
 
             } else {
                 retour = false;
@@ -118,7 +168,10 @@ public class Jeu extends Observable {
 
         return retour;
     }
-    
+    private void afficherMessage(String message) {
+        JOptionPane.showMessageDialog(null, message);
+    }
+
     
     private Point calculerPointCible(Point pCourant, Direction d) {
         Point pCible = null;
@@ -153,3 +206,4 @@ public class Jeu extends Observable {
     }
 
 }
+
