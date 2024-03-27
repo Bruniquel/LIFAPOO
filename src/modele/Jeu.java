@@ -91,7 +91,18 @@ public class Jeu extends Observable {
         // Position de la cible
         targetPosition = new Point(10, 5);
         addCase(new Target(this), targetPosition.x, targetPosition.y);
+
+        // Position des portails
+        Portail portail1 = new Portail(this);
+        Portail portail2 = new Portail(this);
+        addCase(portail1, 3, 5);
+        addCase(portail2, 15, 5);
+        portail1.setPortailAssocie(portail2);
+        portail2.setPortailAssocie(portail1);
     }
+
+
+
 
     private void initialisationNiveau2() {
 

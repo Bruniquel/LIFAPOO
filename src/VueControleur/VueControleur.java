@@ -34,13 +34,14 @@ public class VueControleur extends JFrame implements Observer {
     private ImageIcon icoMur;
     private ImageIcon icoBloc;
 
+    private ImageIcon icoPortail;
     private ImageIcon icoTarget;
 
     private JLabel[][] tabJLabel; // cases graphique (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
 
 
     public VueControleur(Jeu _jeu) {
-        sizeX = jeu.SIZE_X;
+        sizeX = _jeu.SIZE_X;
         sizeY = _jeu.SIZE_Y;
         jeu = _jeu;
 
@@ -52,6 +53,8 @@ public class VueControleur extends JFrame implements Observer {
 
         mettreAJourAffichage();
 
+        // Centrer la fenêtre
+        setLocationRelativeTo(null);
     }
 
     private void ajouterEcouteurClavier() {
@@ -77,6 +80,7 @@ public class VueControleur extends JFrame implements Observer {
         icoVide = chargerIcone("Images/Vide.png");
         icoMur = chargerIcone("Images/Mur.png");
         icoBloc = chargerIcone("Images/shell.png");
+        icoPortail = chargerIcone("Images/Portail.png");
         icoTarget = chargerIcone("Images/Target.png");
     }
 
@@ -124,6 +128,9 @@ public class VueControleur extends JFrame implements Observer {
             for (int y = 0; y < sizeY; y++) {
 
                 Case c = jeu.getGrille()[x][y];
+                if (c instanceof Portail) {
+                    tabJLabel[x][y].setIcon(icoPortail);
+                }
 
                 if (c != null) {
 
