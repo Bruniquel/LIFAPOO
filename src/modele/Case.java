@@ -12,7 +12,7 @@ public abstract class Case extends Obj {
 
 
     // Cette fonction (a redéfinir) détermine le comportement (qui peut être complexe) lorsque l'entité entre dans la case
-    public boolean entrerSurLaCase(Entite e) {
+    public boolean entrerSurLaCase(Entite e,Direction d) {
 
         //Case c = e.getCase();
         //if (c !=null) {
