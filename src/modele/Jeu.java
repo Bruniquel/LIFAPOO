@@ -162,7 +162,7 @@ public class Jeu extends Observable {
             // si la case est libérée
             if (caseALaPosition(pCible).peutEtreParcouru()) {
                 e.getCase().quitterLaCase();
-                caseALaPosition(pCible).entrerSurLaCase(e);
+                caseALaPosition(pCible).entrerSurLaCase(e,d);
                 // Vérifier si la position actuelle correspond à la position de la cible
                 if (pCible.equals(targetPosition)&& e instanceof Bloc) {
                     passerAuNiveauSuivant();
