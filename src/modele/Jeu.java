@@ -93,6 +93,14 @@ public class Jeu extends Observable {
         addCase(new Target(this), targetPosition.x, targetPosition.y);
         addCase(new Glace(this), 5, 5);
         addCase(new Glace(this), 5, 6);
+
+        // Position des portails
+        Portail portail1 = new Portail(this);
+        Portail portail2 = new Portail(this);
+        addCase(portail1, 3, 5);
+        addCase(portail2, 15, 5);
+        portail1.setPortailAssocie(portail2);
+        portail2.setPortailAssocie(portail1);
     }
 
     private void initialisationNiveau2() {
@@ -119,11 +127,9 @@ public class Jeu extends Observable {
         // Position du bloc
         Bloc b = new Bloc(this, grilleEntites[6][6]);
 
-
         // Position de la cible
         targetPosition = new Point(2, 5);
         addCase(new Target(this), targetPosition.x, targetPosition.y);
-
     }
 
 // Implémenter initialiserNiveau3(), initialiserNiveau4() et initialiserNiveau5() de la même manière.
@@ -156,7 +162,7 @@ public class Jeu extends Observable {
             // si la case est libérée
             if (caseALaPosition(pCible).peutEtreParcouru()) {
                 e.getCase().quitterLaCase();
-                caseALaPosition(pCible).entrerSurLaCase(e,d);
+                caseALaPosition(pCible).entrerSurLaCase(e);
                 // Vérifier si la position actuelle correspond à la position de la cible
                 if (pCible.equals(targetPosition)&& e instanceof Bloc) {
                     passerAuNiveauSuivant();
