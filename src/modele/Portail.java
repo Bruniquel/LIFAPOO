@@ -18,4 +18,15 @@ public class Portail extends Case {
     public boolean peutEtreParcouru() {
         return true; // Les portails peuvent être parcourus
     }
+    public boolean entrerSurLaCase(Entite e,Direction d) {
+
+        //Case c = e.getCase();
+        //if (c !=null) {
+        //    c.quitterLaCase();
+        //}
+
+        portailAssocie.setEntite(e);
+        e.avancerDirectionChoisie(d);
+        return true;
+    }
 }
