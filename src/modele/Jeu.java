@@ -108,18 +108,21 @@ public class Jeu extends Observable {
         for (int x = 0; x < 20; x++) {
             addCase(new Mur(this), x, 0);
             addCase(new Mur(this), x, 9);
+
         }
 
         // Murs extérieurs verticaux
         for (int y = 1; y < 9; y++) {
             addCase(new Mur(this), 0, y);
             addCase(new Mur(this), 19, y);
+
         }
 
         // Cases vides
         for (int x = 1; x < 19; x++) {
             for (int y = 1; y < 9; y++) {
                 addCase(new Vide(this), x, y);
+                addCase(new Mur(this), x, 4);
             }
         }
 
@@ -128,8 +131,14 @@ public class Jeu extends Observable {
         Bloc b = new Bloc(this, grilleEntites[6][6]);
 
         // Position de la cible
-        targetPosition = new Point(2, 5);
+        targetPosition = new Point(6, 1);
         addCase(new Target(this), targetPosition.x, targetPosition.y);
+        Portail portail1 = new Portail(this);
+        Portail portail2 = new Portail(this);
+        addCase(portail1, 6, 5);
+        addCase(portail2, 1, 2);
+        portail1.setPortailAssocie(portail2);
+        portail2.setPortailAssocie(portail1);
     }
 
 // Implémenter initialiserNiveau3(), initialiserNiveau4() et initialiserNiveau5() de la même manière.

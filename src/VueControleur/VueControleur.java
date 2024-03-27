@@ -1,5 +1,9 @@
 package VueControleur;
-
+import javax.imageio.ImageIO;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -57,7 +61,11 @@ public class VueControleur extends JFrame implements Observer {
         // Centrer la fenêtre
         setLocationRelativeTo(null);
     }
-
+    private ImageIcon resizeImage(File file) throws IOException {
+        BufferedImage img = ImageIO.read(file);
+        Image resizedImage = img.getScaledInstance(img.getWidth() * 2, img.getHeight() * 2, Image.SCALE_SMOOTH);
+        return new ImageIcon(resizedImage);
+    }
     private void ajouterEcouteurClavier() {
         addKeyListener(new KeyAdapter() { // new KeyAdapter() { ... } est une instance de classe anonyme, il s'agit d'un objet qui correspond au controleur dans MVC
             @Override
@@ -77,13 +85,17 @@ public class VueControleur extends JFrame implements Observer {
 
 
     private void chargerLesIcones() {
-        icoHero = chargerIcone("Images/hero.png");
-        icoVide = chargerIcone("Images/Vide.png");
-        icoMur = chargerIcone("Images/Mur.png");
-        icoBloc = chargerIcone("Images/shell.png");
-        icoPortail = chargerIcone("Images/Portail.png");
-        icoTarget = chargerIcone("Images/Target.png");
-        icoGlace = chargerIcone("Images/glace.png");
+        try {
+            icoHero = resizeImage(new File("Images/hero.png"));
+            icoVide = resizeImage(new File("Images/Vide.png"));
+            icoMur = resizeImage(new File("Images/Mur.png"));
+            icoBloc = resizeImage(new File("Images/shell.png"));
+            icoPortail = resizeImage(new File("Images/Portail.png"));
+            icoTarget = resizeImage(new File("Images/Target.png"));
+            icoGlace = resizeImage(new File("Images/glace.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private ImageIcon chargerIcone(String urlIcone) {
@@ -101,7 +113,7 @@ public class VueControleur extends JFrame implements Observer {
 
     private void placerLesComposantsGraphiques() {
         setTitle("Sokoban");
-        setSize(400, 250);
+        setSize(775, 435);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer l'application à la fermeture de la fenêtre
 
         JComponent grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
