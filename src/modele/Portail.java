@@ -24,8 +24,7 @@ public class Portail extends Case {
         //if (c !=null) {
         //    c.quitterLaCase();
         //}
-
-        portailAssocie.setEntite(e);
+       portailAssocie.setEntite(e);
         e.avancerDirectionChoisie(d);
         return true;
     }

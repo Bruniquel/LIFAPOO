@@ -10,7 +10,10 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.Observable;
 import javax.swing.JOptionPane;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.Vector;
 
 
 public class Jeu extends Observable {
@@ -18,17 +21,23 @@ public class Jeu extends Observable {
     public static final int SIZE_X = 20;
     public static final int SIZE_Y = 10;
 
-    private int niveauActuel = 1; // Niveau actuel du jeu
+    private int niveauActuel = 0; // Niveau actuel du jeu
 
     private Heros heros;
 
     private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une case à partir de sa référence
     private Case[][] grilleEntites = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une case à partir de ses coordonnées
 
+    private Vector<Portail> tabPortails;
     private Point targetPosition;
+    private File[] tabLevels;
 
     public Jeu() {
-        initialisationNiveau1();
+
+        //initialisationNiveau1();
+        tabPortails=new Vector<Portail>();
+        initLevelsFromFiles();
+        initNiveau(tabLevels[0]);
     }
 
 
@@ -47,20 +56,35 @@ public class Jeu extends Observable {
         notifyObservers();
     }
 
+    private void initLevelsFromFiles(){
+        File folder = new File("Data");
+        if (folder.isDirectory())
+        {
+            tabLevels = folder.listFiles();
+        }
+    }
+
     // Méthode pour passer au niveau suivant
     public void passerAuNiveauSuivant() {
-        switch (niveauActuel) {
-            case 1:
-                initialisationNiveau2();
-                niveauActuel++;
-                break;
-            case 2:
-                afficherMessage("Vous avez atteint le niveau 2 !");
-                break;
-            // Ajoutez des cas pour les autres niveaux ici
-            default:
-                afficherMessage("Vous avez atteint le dernier niveau !");
+        niveauActuel++;
+        if (niveauActuel==tabLevels.length){
+            afficherMessage("Vous avez atteint le dernier niveau !");
+        } else {
+            initNiveau(tabLevels[niveauActuel]);
         }
+
+    }
+
+    private void linkPortails() {
+        if (tabPortails.size() % 2 !=0) {
+            System.out.println("/!\\ ATTENTION : il y a un nombre impair de portails dans le niveau. Ils sont donc désactivés /!\\ ");
+            return;
+        }
+        for (int i=0;i<tabPortails.size();i+=2) {
+            tabPortails.elementAt(i).setPortailAssocie(tabPortails.elementAt(i+1));
+            tabPortails.elementAt(i+1).setPortailAssocie(tabPortails.elementAt(i));
+        }
+
     }
     private void initialisationNiveau1() {
         // Murs extérieurs horizontaux
@@ -141,9 +165,51 @@ public class Jeu extends Observable {
         portail2.setPortailAssocie(portail1);
     }
 
-// Implémenter initialiserNiveau3(), initialiserNiveau4() et initialiserNiveau5() de la même manière.
+    private void initNiveau(File file) {
+        try {
+            Scanner myReader = new Scanner(file);
+            int y=0;
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                for (int x=0;x<20;x++) {
+                    switch(data.charAt(x)) {
+                        case 'M':
+                            addCase(new Mur(this), x, y);
+                            break;
+                        case 'H':
+                            addCase(new Vide(this), x, y);
+                            heros = new Heros(this, grilleEntites[x][y]);
+                            break;
+                        case 'B':
+                            addCase(new Vide(this), x, y);
+                            Bloc b = new Bloc(this, grilleEntites[x][y]);
+                            break;
+                        case 'T':
+                            targetPosition = new Point(x, y);
+                            addCase(new Target(this), targetPosition.x, targetPosition.y);
+                            break;
+                        case 'G':
+                            addCase(new Glace(this), x, y);
+                            break;
+                        case 'P':
+                            tabPortails.add(new Portail(this));
+                            addCase(tabPortails.lastElement(),x,y);
+                            break;
+                        default:
+                            addCase(new Vide(this), x, y);
+                            break;
+                    }
 
-
+                }
+                y++;
+            }
+            linkPortails();
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
 
     private void addCase(Case e, int x, int y) {
         grilleEntites[x][y] = e;
@@ -172,11 +238,6 @@ public class Jeu extends Observable {
             if (caseALaPosition(pCible).peutEtreParcouru()) {
                 e.getCase().quitterLaCase();
                 caseALaPosition(pCible).entrerSurLaCase(e,d);
-                // Vérifier si la position actuelle correspond à la position de la cible
-                if (pCible.equals(targetPosition)&& e instanceof Bloc) {
-                    passerAuNiveauSuivant();
-                }
-
             } else {
                 retour = false;
             }
