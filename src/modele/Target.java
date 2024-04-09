@@ -2,6 +2,7 @@ package modele;
 
 public class Target extends Case {
     Jeu jeu;
+    public Integer niv;
     public Target(Jeu _jeu) {
         super(_jeu);
         jeu=_jeu;
@@ -14,8 +15,13 @@ public class Target extends Case {
         //if (c !=null) {
         //    c.quitterLaCase();
         //}
+
         if (e instanceof Bloc) {
-            jeu.passerAuNiveauSuivant();
+            if(niv == null) {
+                jeu.passerAuNiveauSuivant();
+            } else {
+                jeu.passerNivMenu(niv);
+            }
         }
         setEntite(e);
         return true;

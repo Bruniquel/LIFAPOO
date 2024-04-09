@@ -38,6 +38,8 @@ public class Jeu extends Observable {
         tabPortails=new Vector<Portail>();
         initLevelsFromFiles();
         initNiveau(tabLevels[0]);
+        heros = new Heros(this, grilleEntites[5][2]);
+
     }
 
 
@@ -70,7 +72,11 @@ public class Jeu extends Observable {
         if (niveauActuel==tabLevels.length){
             afficherMessage("Vous avez atteint le dernier niveau !");
         } else {
+
+            System.out.println("tp hero");
             initNiveau(tabLevels[niveauActuel]);
+
+
         }
 
     }
@@ -86,93 +92,27 @@ public class Jeu extends Observable {
         }
 
     }
-    private void initialisationNiveau1() {
-        // Murs extérieurs horizontaux
-        for (int x = 0; x < 20; x++) {
-            addCase(new Mur(this), x, 0);
-            addCase(new Mur(this), x, 9);
-        }
 
-        // Murs extérieurs verticaux
-        for (int y = 1; y < 9; y++) {
-            addCase(new Mur(this), 0, y);
-            addCase(new Mur(this), 19, y);
-        }
+    public void passerNivMenu(Integer indice){
 
-        // Cases vides
-        for (int x = 1; x < 19; x++) {
-            for (int y = 1; y < 9; y++) {
-                addCase(new Vide(this), x, y);
-            }
-        }
+        initNiveau(tabLevels[indice-1]);
+        niveauActuel = indice-1;
 
-        // Position du héros
-        heros = new Heros(this, grilleEntites[4][4]);
 
-        // Position du bloc
-        Bloc b = new Bloc(this, grilleEntites[6][6]);
-
-        // Position de la cible
-        targetPosition = new Point(10, 5);
-        addCase(new Target(this), targetPosition.x, targetPosition.y);
-        addCase(new Glace(this), 5, 5);
-        addCase(new Glace(this), 5, 6);
-
-        // Position des portails
-        Portail portail1 = new Portail(this);
-        Portail portail2 = new Portail(this);
-        addCase(portail1, 3, 5);
-        addCase(portail2, 15, 5);
-        portail1.setPortailAssocie(portail2);
-        portail2.setPortailAssocie(portail1);
     }
-
-    private void initialisationNiveau2() {
-
-        for (int x = 0; x < 20; x++) {
-            addCase(new Mur(this), x, 0);
-            addCase(new Mur(this), x, 9);
-
-        }
-
-        // Murs extérieurs verticaux
-        for (int y = 1; y < 9; y++) {
-            addCase(new Mur(this), 0, y);
-            addCase(new Mur(this), 19, y);
-
-        }
-
-        // Cases vides
-        for (int x = 1; x < 19; x++) {
-            for (int y = 1; y < 9; y++) {
-                addCase(new Vide(this), x, y);
-                addCase(new Mur(this), x, 4);
-            }
-        }
-
-
-        // Position du bloc
-        Bloc b = new Bloc(this, grilleEntites[6][6]);
-
-        // Position de la cible
-        targetPosition = new Point(6, 1);
-        addCase(new Target(this), targetPosition.x, targetPosition.y);
-        Portail portail1 = new Portail(this);
-        Portail portail2 = new Portail(this);
-        addCase(portail1, 6, 5);
-        addCase(portail2, 1, 2);
-        portail1.setPortailAssocie(portail2);
-        portail2.setPortailAssocie(portail1);
-    }
-
     private void initNiveau(File file) {
         try {
             Scanner myReader = new Scanner(file);
             int y=0;
+
+
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
                 for (int x=0;x<20;x++) {
                     switch(data.charAt(x)) {
+                        case 'N':
+                            addCase(new Menu(this),x,y);
+                            break;
                         case 'M':
                             addCase(new Mur(this), x, y);
                             break;
@@ -195,7 +135,34 @@ public class Jeu extends Observable {
                             tabPortails.add(new Portail(this));
                             addCase(tabPortails.lastElement(),x,y);
                             break;
+                        case '1':
+                            targetPosition = new Point(x,y);
+                            Target T1 = new Target(this);
+                            addCase(T1,  targetPosition.x, targetPosition.y);
+                            T1.niv = 1;
+                            break;
+                        case '2':
+                            targetPosition = new Point(x,y);
+                            Target T2 = new Target(this);
+                            addCase(T2,  targetPosition.x, targetPosition.y);
+                            T2.niv = 2;
+                            break;
+                        case '3':
+                            targetPosition = new Point(x,y);
+                            Target T3 = new Target(this);
+                            addCase(T3,  targetPosition.x, targetPosition.y);
+                            T3.niv = 3;
+                            break;
+                        case '4':
+                            targetPosition = new Point(x,y);
+                            Target T4 = new Target(this);
+                            addCase(T4,  targetPosition.x, targetPosition.y);
+                            T4.niv = 4;
+                            break;
+
+
                         default:
+
                             addCase(new Vide(this), x, y);
                             break;
                     }
@@ -221,6 +188,11 @@ public class Jeu extends Observable {
     /** Si le déplacement de l'entité est autorisé (pas de mur ou autre entité), il est réalisé
      * Sinon, rien n'est fait.
      */
+    public void tpHero(){
+        Point p = new Point(5,2);
+        caseALaPosition(p).setEntite(heros);
+        setChanged();
+    }
     public boolean deplacerEntite(Entite e, Direction d) {
         boolean retour = true;
         

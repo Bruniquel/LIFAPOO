@@ -38,6 +38,7 @@ public class VueControleur extends JFrame implements Observer {
     private ImageIcon icoMur;
     private ImageIcon icoBloc;
 
+    private ImageIcon[] icoNiveau;
     private ImageIcon icoGlace;
     private ImageIcon icoPortail;
     private ImageIcon icoTarget;
@@ -93,6 +94,18 @@ public class VueControleur extends JFrame implements Observer {
             icoPortail = resizeImage(new File("Images/Portail.png"));
             icoTarget = resizeImage(new File("Images/Target.png"));
             icoGlace = resizeImage(new File("Images/glace.png"));
+            icoNiveau = new ImageIcon[8];
+            for(int i=1;i<6;i++){
+                System.out.println("Images/chiffres/"+i+".png");
+                icoNiveau[i-1] = resizeImage(new File("Images/chiffres/"+i+".png"));
+            }
+            icoNiveau[5] = resizeImage(new File("Images/lettres/n.png"));
+            icoNiveau[6] = resizeImage(new File("Images/lettres/i.png"));
+            icoNiveau[7] = resizeImage(new File("Images/lettres/v.png"));
+
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -136,8 +149,8 @@ public class VueControleur extends JFrame implements Observer {
      */
     private void mettreAJourAffichage() {
 
-
-
+        int indiceNiv=5;
+        int nivAff=1;
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
 
@@ -166,6 +179,20 @@ public class VueControleur extends JFrame implements Observer {
                             tabJLabel[x][y].setIcon(icoTarget);
                         } else if (jeu.getGrille()[x][y] instanceof Glace) {
                             tabJLabel[x][y].setIcon(icoGlace);
+                        } else if (jeu.getGrille()[x][y] instanceof  Menu) {
+                            indiceNiv=indiceNiv%(icoNiveau.length);
+                            tabJLabel[x][y].setIcon(icoNiveau[indiceNiv]);
+
+                            System.out.println(indiceNiv);
+                            if (indiceNiv==0){
+                                if(nivAff<5){
+                                    tabJLabel[x][y].setIcon(icoNiveau[nivAff-1]);
+                                    nivAff++;
+                                    indiceNiv=4;
+                                }
+                            }
+                            indiceNiv++;
+
                         }
                     }
 
